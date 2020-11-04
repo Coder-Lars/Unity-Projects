@@ -1,5 +1,7 @@
 ﻿
 using UnityEngine;
+using System.Collections;
+using UnityEngine.UI;
 
 public class Gun : MonoBehaviour
 {
@@ -7,12 +9,19 @@ public class Gun : MonoBehaviour
    public float range = 100f;
     public Animator animator;
     public Animator animator2;
+    public Text AmmoAmzeige;
+
+    public int maxAmmo = 10;
+    private int currentAmo;
+    
+    private bool isRelading = false;
     
     public float fireRate = 100f;
 
     public ParticleSystem muzzleFlash;
     public GameObject ImpactHit;
-    
+
+  
     
 
     public Camera fpsCam;
@@ -21,7 +30,8 @@ public class Gun : MonoBehaviour
 
     private void Start()
     {
-       
+        currentAmo = maxAmmo;
+        
     }
 
 
@@ -29,6 +39,20 @@ public class Gun : MonoBehaviour
 
     void Update()
     {
+    
+        AmmoAmzeige.text = currentAmo + "/10";
+
+        if (isRelading)
+            return;
+        
+       
+
+        if(currentAmo <= 0 || Input.GetKeyDown(KeyCode.R) && currentAmo != maxAmmo)
+        {
+            StartCoroutine(Reload());
+            return;
+        }
+
             if (Input.GetButton("Fire1") && Time.time >= nextTimeToFire)
         {
             
@@ -39,11 +63,29 @@ public class Gun : MonoBehaviour
             Shoot();
             
         }
+
+        
          
+    }
+
+
+    IEnumerator Reload()
+    {
+
+        isRelading = true;
+        yield return new WaitForSeconds(.7f);
+        animator.SetTrigger("Reload");
+        FindObjectOfType<AudioManager>().Play("Reload");
+        yield return new WaitForSeconds(1.2f);
+        
+        currentAmo = maxAmmo;
+        isRelading = false;
     }
 
     void Shoot()
     {
+
+        currentAmo--;
         
         muzzleFlash.Play();
         FindObjectOfType<AudioManager>().Play("Laser13");
@@ -66,6 +108,8 @@ public class Gun : MonoBehaviour
             
         }
     }
+
+
 
    
   

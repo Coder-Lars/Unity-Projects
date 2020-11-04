@@ -18,6 +18,8 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask groundMask;
     bool isGrounded;
     public float jumpHeight = 3f;
+    public CharacterController cC;
+    private bool isCrouching = false;
 
     // Update is called once per frame
     void Update()
@@ -47,5 +49,26 @@ public class PlayerMovement : MonoBehaviour
         velocity.y += gravity * Time.deltaTime;
 
         controller.Move(velocity * Time.deltaTime);
+
+        if (Input.GetButtonDown("Fire3") && isCrouching == false)
+        {
+            cC.height -= 2;
+            isCrouching = true;
+        }
+
+        else if (Input.GetButtonDown("Fire3") && isCrouching == true)
+        {
+            cC.height += 2;
+            isCrouching = false;
+        }
+
+        if (isCrouching == true)
+        {
+            speed = 5;
+        }
+        else if (isCrouching == false)
+        {
+            speed = 15;
+        }
     }
 }
